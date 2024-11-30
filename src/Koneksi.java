@@ -1,30 +1,36 @@
-import java.sql.DriverManager;
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-abstract class Koneksi {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/puzzle";
-    static final String USER = "";
-    static final String PASS = "";
+public class Koneksi {
+    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/puzzle_game";
+    private static final String USER = "root";
+    private static final String PASS = "";
 
-    static Connection conn;
-    static Statement stmt;
-    static ResultSet rs;
+    private Connection connection;
 
-    public Koneksi(){
-
+    public Connection openConnection() {
         try {
             Class.forName(JDBC_DRIVER);
+            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            System.out.println("Koneksi berhasil ke database!");
+        } catch (ClassNotFoundException e) {
+            System.err.println("JDBC Driver tidak ditemukan: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Gagal membuka koneksi: " + e.getMessage());
+        }
+        return connection;
+    }
 
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            stmt = conn.createStatement();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
+    public void closeConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+                System.out.println("Koneksi ditutup.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Gagal menutup koneksi: " + e.getMessage());
         }
     }
-    public abstract void execute(String query);
 }
