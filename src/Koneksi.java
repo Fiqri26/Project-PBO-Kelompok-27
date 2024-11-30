@@ -3,7 +3,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
 
-abstract class KoneksiDatabase {
+abstract class Koneksi {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost/puzzle";
     static final String USER = "";
@@ -13,7 +13,7 @@ abstract class KoneksiDatabase {
     static Statement stmt;
     static ResultSet rs;
 
-    public KoneksiDatabase(){
+    public Koneksi(){
 
         try {
             Class.forName(JDBC_DRIVER);
