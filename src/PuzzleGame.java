@@ -1,60 +1,118 @@
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class PuzzleGame extends JFrame {
 
     private JPanel puzzlePanel;
     private JButton[] buttons;
-    private final int GRID_SIZE = 3; // Ukuran grid 3x3
     private ArrayList<String> buttonLabels;
+    private JLabel timeLabel, memoryLabel, shuffleCountLabel;
+    private int shuffleCount = 0;
+    private long startTime;
+    private int gridSize;
 
     public PuzzleGame() {
         setTitle("Game Puzzle");
-        setSize(400, 400);
+        setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Panel atas untuk judul
-        JLabel title = new JLabel("Selamat Datang di Game Puzzle", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 20));
-        add(title, BorderLayout.NORTH);
+        // Size Selection Panel
+        JPanel sizePanel = new JPanel();
+        String[] sizes = {"2", "3", "4"};
+        JComboBox<String> sizeComboBox = new JComboBox<>(sizes);
+        JButton startButton = new JButton("Start Game");
+        
+        startButton.addActionListener(e -> {
+            gridSize = Integer.parseInt((String) sizeComboBox.getSelectedItem());
+            initializeGame();
+            sizePanel.setVisible(false);
+        });
+        
+        sizePanel.add(new JLabel("Select Puzzle Size:"));
+        sizePanel.add(sizeComboBox);
+        sizePanel.add(startButton);
+        add(sizePanel, BorderLayout.NORTH);
+        
+        setVisible(true);
+    }
 
-        // Panel puzzle
+    private void initializeGame() {
+        // Game Panel
         puzzlePanel = new JPanel();
-        puzzlePanel.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
+        puzzlePanel.setLayout(new GridLayout(gridSize, gridSize));
         add(puzzlePanel, BorderLayout.CENTER);
 
-        // Tombol dan label puzzle
-        buttons = new JButton[GRID_SIZE * GRID_SIZE];
+        // Information Panel
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new GridLayout(6, 1));
+        
+        // Labels to display information
+        timeLabel = new JLabel("Time Elapsed: 0 seconds");
+        memoryLabel = new JLabel("Current Memory: " + getMemoryUsage() + " MB");
+        shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
+
+        // Add labels to info panel
+        infoPanel.add(new JLabel("Puzzle Size: " + gridSize));
+        infoPanel.add(shuffleCountLabel);
+        infoPanel.add(timeLabel);
+        infoPanel.add(memoryLabel);
+
+        JButton showTimingButton = new JButton("Show Timing");
+        showTimingButton.addActionListener(e -> startTiming());
+
+        JButton resetButton = new JButton("Reset/Resshuffle");
+        resetButton.addActionListener(e -> resetPuzzle());
+
+        JButton pauseButton = new JButton("Pause");
+        JButton resumeButton = new JButton("Resume");
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(e -> System.exit(0));
+
+        // Add buttons to info panel
+        infoPanel.add(showTimingButton);
+        infoPanel.add(resetButton);
+        infoPanel.add(pauseButton);
+        infoPanel.add(resumeButton);
+        infoPanel.add(exitButton);
+
+        add(infoPanel, BorderLayout.EAST);
+
+        // Initialize buttons
+        initializeButtons();
+
+        setVisible(true);
+    }
+
+    private void initializeButtons() {
+        buttons = new JButton[gridSize * gridSize];
         buttonLabels = new ArrayList<>();
-        for (int i = 1; i <= GRID_SIZE * GRID_SIZE - 1; i++) {
+        for (int i = 0; i < gridSize * gridSize - 1; i++) {
             buttonLabels.add(String.valueOf(i));
         }
-        buttonLabels.add(""); // Tombol kosong
+        buttonLabels.add(""); // Empty button
 
-        // Acak urutan tombol
+        // Shuffle and add buttons
         Collections.shuffle(buttonLabels);
-
-        // Tambahkan tombol ke panel
         for (int i = 0; i < buttons.length; i++) {
             buttons[i] = new JButton(buttonLabels.get(i));
-            buttons[i].setFont(new Font("Arial", Font.BOLD, 24));
+            buttons[i].setFont(new Font("Arial", Font.BOLD, 60));
             buttons[i].addActionListener(new ButtonListener());
             puzzlePanel.add(buttons[i]);
         }
-
-        // Tombol reset
-        JButton resetButton = new JButton("Reset");
-        resetButton.addActionListener(e -> resetPuzzle());
-        add(resetButton, BorderLayout.SOUTH);
-
-        setVisible(true);
     }
 
     private void resetPuzzle() {
@@ -62,6 +120,22 @@ public class PuzzleGame extends JFrame {
         for (int i = 0; i < buttons.length; i++) {
             buttons[i].setText(buttonLabels.get(i));
         }
+        shuffleCount++;
+        shuffleCountLabel.setText("Number of Shuffles: " + shuffleCount);
+        startTime = System.currentTimeMillis();
+    }
+
+    private void startTiming() {
+        // Logic for timing (could be implemented with a Timer)
+        new Timer(1000, e -> {
+            long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+            timeLabel.setText("Time Elapsed: " + elapsedTime + " seconds");
+        }).start();
+    }
+
+    private String getMemoryUsage() {
+        long memory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        return String.format("%.2f", (memory / 1024.0 / 1024.0));
     }
 
     private void swapButtons(int emptyIndex, int clickedIndex) {
@@ -72,7 +146,7 @@ public class PuzzleGame extends JFrame {
 
     private boolean isSolved() {
         for (int i = 0; i < buttonLabels.size() - 1; i++) {
-            if (!buttons[i].getText().equals(String.valueOf(i + 1))) {
+            if (!buttons[i].getText().equals(String.valueOf(i))) {
                 return false;
             }
         }
@@ -86,7 +160,6 @@ public class PuzzleGame extends JFrame {
             JButton clickedButton = (JButton) e.getSource();
             int clickedIndex = -1, emptyIndex = -1;
 
-            // Cari indeks tombol yang diklik dan tombol kosong
             for (int i = 0; i < buttons.length; i++) {
                 if (buttons[i] == clickedButton) {
                     clickedIndex = i;
@@ -96,14 +169,13 @@ public class PuzzleGame extends JFrame {
                 }
             }
 
-            // Cek jika tombol yang diklik bisa ditukar
-            if ((clickedIndex == emptyIndex - 1 && clickedIndex % GRID_SIZE != GRID_SIZE - 1)
-                    || (clickedIndex == emptyIndex + 1 && clickedIndex % GRID_SIZE != 0)
-                    || clickedIndex == emptyIndex - GRID_SIZE || clickedIndex == emptyIndex + GRID_SIZE) {
+            // Check if the clicked button can be swapped
+            if ((clickedIndex == emptyIndex - 1 && clickedIndex % gridSize != gridSize - 1)
+                || (clickedIndex == emptyIndex + 1 && clickedIndex % gridSize != 0)
+                || clickedIndex == emptyIndex - gridSize || clickedIndex == emptyIndex + gridSize) {
                 swapButtons(emptyIndex, clickedIndex);
             }
 
-            // Periksa apakah puzzle selesai
             if (isSolved()) {
                 JOptionPane.showMessageDialog(null, "Selamat! Anda menyelesaikan puzzle!");
             }
