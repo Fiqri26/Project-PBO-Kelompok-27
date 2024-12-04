@@ -3,6 +3,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.zone.ZoneOffsetTransitionRule.TimeDefinition;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JButton;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 public class PuzzleGame extends JFrame {
@@ -22,6 +24,7 @@ public class PuzzleGame extends JFrame {
     private int shuffleCount = 0;
     private long startTime;
     private int gridSize;
+    private TimerThread timerThread;
 
     public PuzzleGame() {
         setTitle("Pitczzle");
@@ -32,7 +35,7 @@ public class PuzzleGame extends JFrame {
 
         // Size Selection Panel
         JPanel sizePanel = new JPanel();
-        String[] sizes = {"2", "3", "4"};
+        String[] sizes = { "2", "3", "4" };
         JComboBox<String> sizeComboBox = new JComboBox<>(sizes);
         JButton startButton = new JButton("Start Game");
 
@@ -80,7 +83,12 @@ public class PuzzleGame extends JFrame {
         JButton pauseButton = new JButton("Pause");
         JButton resumeButton = new JButton("Resume");
         JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> System.exit(0));
+        exitButton.addActionListener(e -> {
+            if (timerThread != null) {
+                timerThread.stopTimer();
+            }
+            System.exit(0);
+        });
 
         // Add buttons to info panel
         infoPanel.add(showTimingButton);
@@ -95,6 +103,9 @@ public class PuzzleGame extends JFrame {
         initializeButtons();
 
         setVisible(true);
+
+        timerThread = new TimerThread(timeLabel);
+        timerThread.start();
     }
 
     private void initializeButtons() {
@@ -122,15 +133,65 @@ public class PuzzleGame extends JFrame {
         }
         shuffleCount++;
         shuffleCountLabel.setText("Number of Shuffles: " + shuffleCount);
-        startTime = System.currentTimeMillis();
+        // startTime = System.currentTimeMillis();
+        if(timerThread != null){
+            timerThread.resetTimer();
+        }
+    }
+
+    public class TimerThread extends Thread {
+        private int elapsedTimeInSeconds;
+        private boolean running = true;
+        private JLabel timeLabel;
+
+        public TimerThread(JLabel timeLabel) {
+            this.timeLabel = timeLabel;
+            // this.elapsedTimeInSeconds = 0;
+            // this.running = false;
+        }
+
+        @Override
+        public void run() {
+            running = true;
+            while (running) {
+                try {
+                    Thread.sleep(1000);
+                    elapsedTimeInSeconds++;
+                    SwingUtilities.invokeLater(() -> 
+                        timeLabel.setText("Time Elapsed: " + elapsedTimeInSeconds + " Seconds")
+                    );
+                    
+                } catch (InterruptedException e) {
+                    // System.out.println("Timer interupted.");
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+
+        public void stopTimer() {
+            running = false;
+        }
+
+        public void resetTimer() {
+            elapsedTimeInSeconds = 0;
+            SwingUtilities.invokeLater(() ->
+                timeLabel.setText("Time Elapsed: 0 seconds")
+            );
+        }
+
+        public int getElapsedTimeInSeconds() {
+            return elapsedTimeInSeconds;
+        }
     }
 
     private void startTiming() {
         // Logic for timing (could be implemented with a Timer)
         new Timer(1000, e -> {
-            long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
-            timeLabel.setText("Time Elapsed: " + elapsedTime + " seconds");
+        long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+        timeLabel.setText("Time Elapsed: " + elapsedTime + " seconds");
         }).start();
+
     }
 
     private String getMemoryUsage() {
@@ -150,7 +211,19 @@ public class PuzzleGame extends JFrame {
                 return false;
             }
         }
-        return buttons[buttons.length - 1].getText().equals("");
+        // return buttons[buttons.length - 1].getText().equals("");
+        if (!buttons[buttons.length - 1].getText().equals("")){
+            return false;
+        }
+
+        if (timerThread != null) {
+            timerThread.stopTimer();
+        }
+
+        JOptionPane.showMessageDialog(this, "Selamat, anda menyelesaikan puzzle dalam waktu " + timerThread.getElapsedTimeInSeconds() + " detik!");
+        timerThread.resetTimer();
+
+        return true;
     }
 
     private class ButtonListener implements ActionListener {
@@ -171,14 +244,16 @@ public class PuzzleGame extends JFrame {
 
             // Check if the clicked button can be swapped
             if ((clickedIndex == emptyIndex - 1 && clickedIndex % gridSize != gridSize - 1)
-                || (clickedIndex == emptyIndex + 1 && clickedIndex % gridSize != 0)
-                || clickedIndex == emptyIndex - gridSize || clickedIndex == emptyIndex + gridSize) {
+                    || (clickedIndex == emptyIndex + 1 && clickedIndex % gridSize != 0)
+                    || clickedIndex == emptyIndex - gridSize || clickedIndex == emptyIndex + gridSize) {
                 swapButtons(emptyIndex, clickedIndex);
             }
 
-            if (isSolved()) {
-                JOptionPane.showMessageDialog(null, "Selamat! Anda menyelesaikan puzzle!");
-            }
+            // if (isSolved()) {
+            //     JOptionPane.showMessageDialog(null, "Selamat! Anda menyelesaikan puzzle!");
+            // }
+
+            isSolved();
         }
     }
 
