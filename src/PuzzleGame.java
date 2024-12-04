@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -25,8 +24,8 @@ public class PuzzleGame extends JFrame {
     private int gridSize;
 
     public PuzzleGame() {
-        setTitle("Game Puzzle");
-        setSize(800, 600);
+        setTitle("Pitczzle");
+        setSize(1000, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -183,7 +182,4 @@ public class PuzzleGame extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        new PuzzleGame();
-    }
 }
