@@ -3,7 +3,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.zone.ZoneOffsetTransitionRule.TimeDefinition;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JButton;
@@ -157,10 +156,10 @@ public class PuzzleGame extends JFrame {
                 try {
                     Thread.sleep(1000);
                     elapsedTimeInSeconds++;
-                    SwingUtilities.invokeLater(() -> 
+                    SwingUtilities.invokeLater(() ->
                         timeLabel.setText("Time Elapsed: " + elapsedTimeInSeconds + " Seconds")
                     );
-                    
+
                 } catch (InterruptedException e) {
                     // System.out.println("Timer interupted.");
                     Thread.currentThread().interrupt();
