@@ -1,10 +1,17 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -12,7 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+// import javax.swing.Timer;
 
 public class PuzzleGame extends JFrame {
 
@@ -21,7 +28,7 @@ public class PuzzleGame extends JFrame {
     private ArrayList<String> buttonLabels;
     private JLabel timeLabel, memoryLabel, shuffleCountLabel;
     private int shuffleCount = 0;
-    private long startTime;
+    // private long startTime;
     private int gridSize;
     private TimerThread timerThread;
 
@@ -30,86 +37,206 @@ public class PuzzleGame extends JFrame {
         setSize(1000, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        // setLayout(new BorderLayout());
 
         // Size Selection Panel
-        JPanel sizePanel = new JPanel();
-        String[] sizes = { "2", "3", "4" };
-        JComboBox<String> sizeComboBox = new JComboBox<>(sizes);
-        JButton startButton = new JButton("Start Game");
+        // JPanel sizePanel = new JPanel();
+        // String[] sizes = { "2", "3", "4" };
+        // JComboBox<String> sizeComboBox = new JComboBox<>(sizes);
+        // JButton startButton = new JButton("Start Game");
 
+        puzzlePanel = new JPanel();
+        puzzlePanel.setLayout(new BorderLayout());
+        setContentPane(puzzlePanel);
+
+        showLevelSelection();
+
+        // startButton.addActionListener(e -> {
+        //     gridSize = Integer.parseInt((String) sizeComboBox.getSelectedItem());
+        //     initializeGame();
+        //     sizePanel.setVisible(false);
+        // });
+
+        // sizePanel.add(new JLabel("Select Puzzle Size:"));
+        // sizePanel.add(sizeComboBox);
+        // sizePanel.add(startButton);
+        // add(sizePanel, BorderLayout.NORTH);
+
+        // setVisible(true);
+    }
+
+    private void showLevelSelection() {
+        JPanel sizePanel = new JPanel();
+        sizePanel.setLayout(new BoxLayout(sizePanel, BoxLayout.Y_AXIS));
+        sizePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        sizePanel.setBackground(Color.LIGHT_GRAY);
+        // sizePanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 3));
+        sizePanel.setPreferredSize(new Dimension(300, 200));
+
+        JLabel selectLabel = new JLabel("Select Level:");
+        selectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        selectLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
+        String[] levels = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"};
+        JComboBox<String> lvlComboBox = new JComboBox<>(levels);
+        lvlComboBox.setMaximumSize(new Dimension(200, 30));
+        lvlComboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lvlComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JButton startButton = new JButton("Start Game");
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.setFont(new Font("Arial", Font.BOLD, 16));
+        startButton.setFocusPainted(false);
+        startButton.setBackground(new Color(100, 149, 237));
+        startButton.setForeground(Color.WHITE);
         startButton.addActionListener(e -> {
-            gridSize = Integer.parseInt((String) sizeComboBox.getSelectedItem());
+            int selectedLevel = lvlComboBox.getSelectedIndex() + 1;
+            gridSize = selectedLevel + 1;
             initializeGame();
             sizePanel.setVisible(false);
         });
 
-        sizePanel.add(new JLabel("Select Puzzle Size:"));
-        sizePanel.add(sizeComboBox);
+        sizePanel.add(Box.createVerticalStrut(20));
+        sizePanel.add(selectLabel);
+        sizePanel.add(Box.createVerticalStrut(20));
+        sizePanel.add(lvlComboBox);
+        sizePanel.add(Box.createVerticalStrut(20));
         sizePanel.add(startButton);
-        add(sizePanel, BorderLayout.NORTH);
+        sizePanel.add(Box.createVerticalStrut(20));
 
-        setVisible(true);
+        puzzlePanel.setLayout(new GridBagLayout());
+        puzzlePanel.add(sizePanel);
+
+        revalidate();
+        repaint();
     }
 
     private void initializeGame() {
         // Game Panel
-        puzzlePanel = new JPanel();
-        puzzlePanel.setLayout(new GridLayout(gridSize, gridSize));
-        add(puzzlePanel, BorderLayout.CENTER);
+        // puzzlePanel = new JPanel();
+        // puzzlePanel.setLayout(new GridLayout(gridSize, gridSize));
+        // add(puzzlePanel, BorderLayout.CENTER);
+
+        puzzlePanel.removeAll();
+        puzzlePanel.setLayout(new BorderLayout());
+
+        JPanel gridContainer = new JPanel(new GridBagLayout());
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(gridSize, gridSize));
+        gridPanel.setPreferredSize(new Dimension(400, 400));
+        gridPanel.setBackground(Color.WHITE);
+
+        gridContainer.add(gridPanel);
+        puzzlePanel.add(gridPanel, BorderLayout.CENTER);
 
         // Information Panel
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new GridLayout(6, 1));
+        // infoPanel.setLayout(new GridLayout(6, 1));
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
+        infoPanel.setBackground(Color.LIGHT_GRAY);
+        infoPanel.setPreferredSize(new Dimension(250, 0));
 
         // Labels to display information
         timeLabel = new JLabel("Time Elapsed: 0 seconds");
-        memoryLabel = new JLabel("Current Memory: " + getMemoryUsage() + " MB");
-        shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
+        timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // memoryLabel = new JLabel("Current Memory: " + getMemoryUsage() + " MB");
+        // shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
 
         // Add labels to info panel
-        infoPanel.add(new JLabel("Puzzle Size: " + gridSize));
-        infoPanel.add(shuffleCountLabel);
-        infoPanel.add(timeLabel);
-        infoPanel.add(memoryLabel);
+        // infoPanel.add(new JLabel("Puzzle Size: " + gridSize));
+        // infoPanel.add(shuffleCountLabel);
+        // infoPanel.add(memoryLabel);
 
-        JButton showTimingButton = new JButton("Show Timing");
-        showTimingButton.addActionListener(e -> startTiming());
+        Dimension buttonSize = new Dimension(200, 40);
 
-        JButton resetButton = new JButton("Reset/Resshuffle");
-        resetButton.addActionListener(e -> resetPuzzle());
+        // JButton showTimingButton = new JButton("Show Timing");
+        // showTimingButton.addActionListener(e -> startTiming());
 
-        JButton pauseButton = new JButton("Pause");
-        JButton resumeButton = new JButton("Resume");
-        JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> {
-            if (timerThread != null) {
-                timerThread.stopTimer();
-            }
+        JButton resetButton = createInfoButton("Reset/Resshuffle", buttonSize, e -> resetPuzzle());
+        JButton pauseButton = createInfoButton("Pause", buttonSize, e -> {
+            if (timerThread != null) timerThread.stopTimer();
+        });
+        JButton resumeButton = createInfoButton("Resume", buttonSize, e -> {
+            if (timerThread != null && timerThread.isAlive()) timerThread.start();
+        });
+        JButton exitButton = createInfoButton("Exit", buttonSize, e -> {
+            if (timerThread != null) timerThread.stopTimer();
             System.exit(0);
         });
 
+
+        // JButton resetButton = new JButton("Reset/Resshuffle");
+        // resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // resetButton.addActionListener(e -> resetPuzzle());
+
+        // JButton pauseButton = new JButton("Pause");
+        // pauseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // pauseButton.addActionListener(e -> {
+        //     if (timerThread != null) {
+        //         timerThread.stopTimer();
+        //     }
+        // });
+
+        // JButton resumeButton = new JButton("Resume");
+        // resumeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // resumeButton.addActionListener(e -> {
+        //     if (timerThread != null && timerThread.isAlive()) {
+        //         timerThread.start();
+        //     }
+        // });
+
+        // JButton exitButton = new JButton("Exit");
+        // exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // exitButton.addActionListener(e -> {
+        //     if (timerThread != null) {
+        //         timerThread.stopTimer();
+        //     }
+        //     System.exit(0);
+        // });
+
         // Add buttons to info panel
-        infoPanel.add(showTimingButton);
+        // infoPanel.add(showTimingButton);
+        infoPanel.add(timeLabel);
+        infoPanel.add(Box.createHorizontalStrut(20));
         infoPanel.add(resetButton);
+        infoPanel.add(Box.createHorizontalStrut(10));
         infoPanel.add(pauseButton);
+        infoPanel.add(Box.createHorizontalStrut(10));
         infoPanel.add(resumeButton);
+        infoPanel.add(Box.createHorizontalStrut(10));
         infoPanel.add(exitButton);
 
-        add(infoPanel, BorderLayout.EAST);
+        // add(infoPanel, BorderLayout.EAST);
+        puzzlePanel.add(infoPanel, BorderLayout.EAST);
 
         // Initialize buttons
-        initializeButtons();
+        initializeButtons(gridPanel);
 
-        setVisible(true);
+        revalidate();
+        repaint();
+
+        // setVisible(true);
 
         timerThread = new TimerThread(timeLabel);
         timerThread.start();
     }
 
-    private void initializeButtons() {
+    private JButton createInfoButton(String text, Dimension size, ActionListener action){
+        JButton button = new  JButton(text);
+        button.setPreferredSize(size);
+        button.setMaximumSize(size);
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setFocusPainted(false);
+        button.addActionListener(action);
+        return button;
+    }
+
+    private void initializeButtons(JPanel gridPanel) {
         buttons = new JButton[gridSize * gridSize];
         buttonLabels = new ArrayList<>();
+
         for (int i = 0; i < gridSize * gridSize - 1; i++) {
             buttonLabels.add(String.valueOf(i));
         }
@@ -119,9 +246,9 @@ public class PuzzleGame extends JFrame {
         Collections.shuffle(buttonLabels);
         for (int i = 0; i < buttons.length; i++) {
             buttons[i] = new JButton(buttonLabels.get(i));
-            buttons[i].setFont(new Font("Arial", Font.BOLD, 60));
+            buttons[i].setFont(new Font("Arial", Font.BOLD, Math.max(30, 60 / gridSize)));
             buttons[i].addActionListener(new ButtonListener());
-            puzzlePanel.add(buttons[i]);
+            gridPanel.add(buttons[i]);
         }
     }
 
@@ -184,19 +311,19 @@ public class PuzzleGame extends JFrame {
         }
     }
 
-    private void startTiming() {
-        // Logic for timing (could be implemented with a Timer)
-        new Timer(1000, e -> {
-        long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
-        timeLabel.setText("Time Elapsed: " + elapsedTime + " seconds");
-        }).start();
+    // private void startTiming() {
+    //     // Logic for timing (could be implemented with a Timer)
+    //     new Timer(1000, e -> {
+    //     long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+    //     timeLabel.setText("Time Elapsed: " + elapsedTime + " seconds");
+    //     }).start();
 
-    }
+    // }
 
-    private String getMemoryUsage() {
-        long memory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        return String.format("%.2f", (memory / 1024.0 / 1024.0));
-    }
+    // private String getMemoryUsage() {
+    //     long memory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+    //     return String.format("%.2f", (memory / 1024.0 / 1024.0));
+    // }
 
     private void swapButtons(int emptyIndex, int clickedIndex) {
         String temp = buttons[emptyIndex].getText();
