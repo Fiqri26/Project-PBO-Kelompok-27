@@ -40,7 +40,6 @@ public class Beranda extends JFrame {
                 PuzzleGame puzzlegame = new PuzzleGame();
                 puzzlegame.setVisible(true);
                 dispose();
-
             }
         });
         backgroundPanel.add(startButton);
