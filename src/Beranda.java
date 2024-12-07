@@ -30,7 +30,7 @@ public class Beranda extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
         JButton startButton = new JButton("Start");
@@ -54,7 +54,7 @@ public class Beranda extends JFrame {
         guideButton.setBackground(new Color(147, 112, 219));
         guideButton.setForeground(Color.WHITE);
         guideButton.setFocusPainted(false);
-        guideButton.setBounds(1200, 600, 150, 40);
+        guideButton.setBounds(800, 600, 150, 40);
         guideButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
