@@ -25,8 +25,13 @@ public class Beranda extends JFrame {
                 g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
             }
         };
-        backgroundPanel.setLayout(null);
+        backgroundPanel.setLayout(new BorderLayout());
         setContentPane(backgroundPanel);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false); // buat transparant
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
         JButton startButton = new JButton("Start");
         startButton.setFont(new Font("Arial", Font.BOLD, 18));
@@ -43,7 +48,8 @@ public class Beranda extends JFrame {
 
             }
         });
-        backgroundPanel.add(startButton);
+        // backgroundPanel.add(startButton);
+        buttonPanel.add(startButton);
 
         JButton guideButton = new JButton("How to Play");
         guideButton.setFont(new Font("Arial", Font.BOLD, 18));
@@ -71,7 +77,10 @@ public class Beranda extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        backgroundPanel.add(guideButton);
+        // backgroundPanel.add(guideButton);
+        buttonPanel.add(guideButton);
+
+        backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     public static void main(String[] args) {
