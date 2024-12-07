@@ -13,7 +13,7 @@ public class Beranda extends JFrame {
         setTitle("Pitczzle");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 600);
-        setResizable(true);
+        setResizable(false);
         setLocationRelativeTo(null);
 
         JPanel backgroundPanel = new JPanel() {
@@ -29,7 +29,7 @@ public class Beranda extends JFrame {
         setContentPane(backgroundPanel);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setOpaque(false); // buat transparant
+        buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
@@ -47,7 +47,6 @@ public class Beranda extends JFrame {
                 dispose();
             }
         });
-        // backgroundPanel.add(startButton);
         buttonPanel.add(startButton);
 
         JButton guideButton = new JButton("How to Play");
@@ -55,7 +54,7 @@ public class Beranda extends JFrame {
         guideButton.setBackground(new Color(147, 112, 219));
         guideButton.setForeground(Color.WHITE);
         guideButton.setFocusPainted(false);
-        guideButton.setBounds(800, 600, 150, 40);
+        guideButton.setBounds(1200, 600, 150, 40);
         guideButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -76,7 +75,6 @@ public class Beranda extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        // backgroundPanel.add(guideButton);
         buttonPanel.add(guideButton);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);

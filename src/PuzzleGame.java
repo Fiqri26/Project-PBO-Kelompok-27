@@ -21,12 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 // import javax.swing.Timer;
 
-public class PuzzleGame extends JFrame {
+public class PuzzleGame extends JFrame implements ButtonActionHandler{
 
     private JPanel puzzlePanel;
     private JButton[] buttons;
     private ArrayList<String> buttonLabels;
-    private JLabel timeLabel, memoryLabel, shuffleCountLabel;
+    private JLabel timeLabel, shuffleCountLabel;
     private int shuffleCount = 0;
     // private long startTime;
     private int gridSize;
@@ -35,8 +35,10 @@ public class PuzzleGame extends JFrame {
     public PuzzleGame() {
         setTitle("Pitczzle");
         setSize(1000, 600);
+        setBackground(new Color(100, 149, 237));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setResizable(false);
         // setLayout(new BorderLayout());
 
         // Size Selection Panel
@@ -148,23 +150,15 @@ public class PuzzleGame extends JFrame {
         // infoPanel.add(shuffleCountLabel);
         // infoPanel.add(memoryLabel);
 
-        Dimension buttonSize = new Dimension(200, 40);
+        Dimension buttonSize = new Dimension(120, 40);
 
         // JButton showTimingButton = new JButton("Show Timing");
         // showTimingButton.addActionListener(e -> startTiming());
 
-        JButton resetButton = createInfoButton("Reset/Resshuffle", buttonSize, e -> resetPuzzle());
-        JButton pauseButton = createInfoButton("Pause", buttonSize, e -> {
-            if (timerThread != null) timerThread.stopTimer();
-        });
-        JButton resumeButton = createInfoButton("Resume", buttonSize, e -> {
-            if (timerThread != null && timerThread.isAlive()) timerThread.start();
-        });
-        JButton exitButton = createInfoButton("Exit", buttonSize, e -> {
-            if (timerThread != null) timerThread.stopTimer();
-            System.exit(0);
-        });
-
+        JButton resetButton = createInfoButton("Reset", buttonSize, e -> reset());
+        JButton pauseButton = createInfoButton("Pause", buttonSize, e -> pause());
+        JButton resumeButton = createInfoButton("Resume", buttonSize, e -> resume());
+        JButton exitButton = createInfoButton("Exit", buttonSize, e -> exit());
 
         // JButton resetButton = new JButton("Reset/Resshuffle");
         // resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -252,6 +246,33 @@ public class PuzzleGame extends JFrame {
         }
     }
 
+    @Override
+    public void reset() {
+        resetPuzzle();
+    }
+
+    @Override
+    public void pause() {
+        if (timerThread != null) {
+            timerThread.stopTimer();
+        }
+    }
+
+    @Override
+    public void resume() {
+        if (timerThread != null && timerThread.isAlive()) {
+            timerThread.resumeTimer();
+        }
+    }
+
+    @Override
+    public void exit() {
+        if (timerThread != null) {
+            timerThread.stopTimer();
+        }
+        System.exit(0);
+    }
+
     private void resetPuzzle() {
         Collections.shuffle(buttonLabels);
         for (int i = 0; i < buttons.length; i++) {
@@ -268,12 +289,11 @@ public class PuzzleGame extends JFrame {
     public class TimerThread extends Thread {
         private int elapsedTimeInSeconds;
         private boolean running = true;
+        private boolean paused = false;
         private JLabel timeLabel;
 
         public TimerThread(JLabel timeLabel) {
             this.timeLabel = timeLabel;
-            // this.elapsedTimeInSeconds = 0;
-            // this.running = false;
         }
 
         @Override
@@ -281,14 +301,17 @@ public class PuzzleGame extends JFrame {
             running = true;
             while (running) {
                 try {
+                    synchronized (this) {
+                        while (paused) {
+                            wait(); // Tunggu sampai `resumeTimer()` dipanggil
+                        }
+                    }
                     Thread.sleep(1000);
                     elapsedTimeInSeconds++;
                     SwingUtilities.invokeLater(() ->
                         timeLabel.setText("Time Elapsed: " + elapsedTimeInSeconds + " Seconds")
                     );
-
                 } catch (InterruptedException e) {
-                    // System.out.println("Timer interupted.");
                     Thread.currentThread().interrupt();
                     break;
                 }
@@ -306,10 +329,20 @@ public class PuzzleGame extends JFrame {
             );
         }
 
+        public void pauseTimer() {
+            paused = true;
+        }
+
+        public synchronized void resumeTimer() {
+            paused = false;
+            notify(); // Melanjutkan thread yang sedang menunggu
+        }
+
         public int getElapsedTimeInSeconds() {
             return elapsedTimeInSeconds;
         }
     }
+
 
     // private void startTiming() {
     //     // Logic for timing (could be implemented with a Timer)
