@@ -35,7 +35,6 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler{
     public PuzzleGame() {
         setTitle("Pitczzle");
         setSize(1000, 600);
-        setBackground(new Color(100, 149, 237));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -48,6 +47,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler{
         // JButton startButton = new JButton("Start Game");
 
         puzzlePanel = new JPanel();
+        puzzlePanel.setBackground(new Color(100, 149, 237));
         puzzlePanel.setLayout(new BorderLayout());
         setContentPane(puzzlePanel);
 
@@ -71,7 +71,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler{
         JPanel sizePanel = new JPanel();
         sizePanel.setLayout(new BoxLayout(sizePanel, BoxLayout.Y_AXIS));
         sizePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        sizePanel.setBackground(Color.LIGHT_GRAY);
+        sizePanel.setBackground(new Color(255, 223, 186)); // Warna krem muda
         // sizePanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 3));
         sizePanel.setPreferredSize(new Dimension(300, 200));
 
