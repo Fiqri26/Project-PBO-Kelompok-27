@@ -31,7 +31,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         sizePanel.setBorder(BorderFactory.createEmptyBorder(40, 60, 50, 60));
         sizePanel.setBackground(new Color(255, 255, 255));
 
-        JLabel selectLabel = new JLabel("Select Level:");
+        JLabel selectLabel = new JLabel("SELECT LEVEL");
         selectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         selectLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
@@ -39,7 +39,9 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         lvlComboBox = new JComboBox<>(levels);
         lvlComboBox.setMaximumSize(new Dimension(200, 30));
         lvlComboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lvlComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        lvlComboBox.setBackground(new Color(100, 149, 237));
+        lvlComboBox.setForeground(Color.WHITE);
+        lvlComboBox.setFont(new Font("Arial", Font.PLAIN, 15));
 
         JButton startButton = new JButton("Start Game");
         startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -51,9 +53,9 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
 
         sizePanel.add(Box.createVerticalStrut(20));
         sizePanel.add(selectLabel);
-        sizePanel.add(Box.createVerticalStrut(20));
+        sizePanel.add(Box.createVerticalStrut(15));
         sizePanel.add(lvlComboBox);
-        sizePanel.add(Box.createVerticalStrut(40));
+        sizePanel.add(Box.createVerticalStrut(60));
         sizePanel.add(startButton);
         sizePanel.add(Box.createVerticalStrut(0));
 
@@ -82,7 +84,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         infoPanel.setBackground(new Color(255, 255, 255));
         infoPanel.setPreferredSize(new Dimension(250, 0));
 
-        timeLabel = new JLabel("Time Elapsed : 0 seconds");
+        timeLabel = new JLabel("Time Elapsed: 0:00");
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
         shuffleCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -94,14 +96,15 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         JButton resumeButton = createInfoButton("Resume", buttonSize, e -> resume());
         JButton exitButton = createInfoButton("Exit", buttonSize, e -> exit());
 
+        infoPanel.add(Box.createVerticalStrut(40));
         infoPanel.add(timeLabel);
-        infoPanel.add(Box.createHorizontalStrut(20));
+        infoPanel.add(Box.createVerticalStrut(60));
         infoPanel.add(resetButton);
-        infoPanel.add(Box.createHorizontalStrut(10));
+        infoPanel.add(Box.createVerticalStrut(35));
         infoPanel.add(pauseButton);
-        infoPanel.add(Box.createHorizontalStrut(10));
+        infoPanel.add(Box.createVerticalStrut(35));
         infoPanel.add(resumeButton);
-        infoPanel.add(Box.createHorizontalStrut(10));
+        infoPanel.add(Box.createVerticalStrut(35));
         infoPanel.add(exitButton);
 
         puzzlePanel.add(infoPanel, BorderLayout.EAST);
@@ -168,7 +171,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
             }
         }
         timerStarted = false;
-        timeLabel.setText("Time Elapsed: 0 seconds");
+        timeLabel.setText("Time Elapsed: 0:00");
         timerThread = new TimerThread(timeLabel);
         resetPuzzle();
     }
@@ -207,55 +210,6 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         }
     }
 
-    public class TimerThread extends Thread {
-        private int elapsedTimeInSeconds = 0;
-        private boolean running = true;
-        private boolean paused = false;
-        private JLabel timeLabel;
-
-        public TimerThread(JLabel timeLabel) {
-            this.timeLabel = timeLabel;
-        }
-
-        @Override
-        public void run() {
-            while (running) {
-                try {
-                    synchronized (this) {
-                        while (paused) {
-                            wait();
-                        }
-                    }
-                    Thread.sleep(1000);
-                    elapsedTimeInSeconds++;
-                    SwingUtilities
-                            .invokeLater(() -> timeLabel.setText("Time Elapsed: " + elapsedTimeInSeconds + " Seconds"));
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }
-
-        public void stopTimer() {
-            running = false;
-        }
-
-        public void resetTimer() {
-            elapsedTimeInSeconds = 0;
-            SwingUtilities.invokeLater(() -> timeLabel.setText("Time Elapsed: 0 seconds"));
-        }
-
-        public void pauseTimer() {
-            paused = true;
-        }
-
-        public synchronized void resumeTimer() {
-            paused = false;
-            notify();
-        }
-    }
-
     private void swapButtons(int emptyIndex, int clickedIndex) {
         String temp = buttons[emptyIndex].getText();
         buttons[emptyIndex].setText(buttons[clickedIndex].getText());
@@ -277,40 +231,77 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
             timerThread.stopTimer();
         }
 
-        JPanel completeDialogPanel = new JPanel();
-        completeDialogPanel.setLayout(new BoxLayout(completeDialogPanel, BoxLayout.Y_AXIS));
-        completeDialogPanel.setBackground(new Color(255, 255, 255));
-        completeDialogPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        if (gridSize >= 5) {
+            JPanel finalDialogPanel = new JPanel();
+            finalDialogPanel.setLayout(new BoxLayout(finalDialogPanel, BoxLayout.Y_AXIS));
+            finalDialogPanel.setBackground(new Color(255, 255, 255));
+            finalDialogPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel messageLabel = new JLabel("Selamat!");
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JLabel messageLabel = new JLabel("Selamat Anda Telah Menyelesaikan Semua Level!!!");
+            messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
+            messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel intructionLabel = new JLabel("Apa anda ingin melanjutkan ke level berikutnya?");
-        intructionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        intructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JLabel instructionLabel = new JLabel("Apa yang ingin anda lakukan selanjutnya?");
+            instructionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            instructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        completeDialogPanel.add(messageLabel);
-        completeDialogPanel.add(Box.createHorizontalStrut(15));
-        completeDialogPanel.add(intructionLabel);
+            finalDialogPanel.add(messageLabel);
+            finalDialogPanel.add(Box.createVerticalStrut(15));
+            finalDialogPanel.add(instructionLabel);
 
-        Object[] options = { "Next", "Cancel" };
-        int choice = JOptionPane.showOptionDialog(
-                this,
-                completeDialogPanel,
-                "Level Completed",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null,
-                options,
+            Object[] options = {"Restart", "Exit"};
+            int choice = JOptionPane.showOptionDialog(
+                this, 
+                finalDialogPanel, 
+                "Game Completed", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.PLAIN_MESSAGE, 
+                null, 
+                options, 
                 options[0]);
-
-        if (choice == JOptionPane.YES_OPTION) {
-            if (gridSize < 5) {
-                gridSize++;
+            
+            if (choice == JOptionPane.YES_OPTION) {
+                gridSize = 2;
+                initializeGame();
+            } else {
+                System.exit(0);
             }
-            initializeGame();
         } else {
-            initializeGame();
+            JPanel completeDialogPanel = new JPanel();
+            completeDialogPanel.setLayout(new BoxLayout(completeDialogPanel, BoxLayout.Y_AXIS));
+            completeDialogPanel.setBackground(new Color(255, 255, 255));
+            completeDialogPanel.setBorder(BorderFactory.createEmptyBorder(40, 20, 40, 20));
+
+            JLabel messageLabel = new JLabel("Selamat telah menyelesaikan level!");
+            messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
+            messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            JLabel intructionLabel = new JLabel("Apa anda ingin melanjutkan ke level berikutnya?");
+            intructionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            intructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            completeDialogPanel.add(messageLabel);
+            completeDialogPanel.add(Box.createVerticalStrut(35));
+            completeDialogPanel.add(intructionLabel);
+
+            Object[] options = { "Next", "Cancel" };
+            int choice = JOptionPane.showOptionDialog(
+                    this,
+                    completeDialogPanel,
+                    "Level Completed",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.PLAIN_MESSAGE, null,
+                    options,
+                    options[0]);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                if (gridSize < 5) {
+                    gridSize++;
+                }
+                initializeGame();
+            } else {
+                initializeGame();
+            }
         }
 
         return true;
