@@ -3,11 +3,13 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-public class PuzzleGame extends JFrame implements ButtonActionHandler {
+public class PuzzleGame extends GameFrame implements GameController{
 
     private JPanel puzzlePanel;
+    private JPanel sizePanel;
     private JButton[] buttons;
     private ArrayList<String> buttonLabels;
+    private JComboBox<String> lvlComboBox;
     private JLabel timeLabel, shuffleCountLabel;
     private int shuffleCount = 0;
     private int gridSize;
@@ -15,11 +17,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
     private TimerThread timerThread;
 
     public PuzzleGame() {
-        setTitle("Puzzle");
-        setSize(1000, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
+        super("Pictzzle");
         puzzlePanel = new JPanel();
         puzzlePanel.setBackground(new Color(100, 149, 237));
         puzzlePanel.setLayout(new BorderLayout());
@@ -28,7 +26,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
     }
 
     private void showLevelSelection() {
-        JPanel sizePanel = new JPanel();
+        sizePanel = new JPanel();
         sizePanel.setLayout(new BoxLayout(sizePanel, BoxLayout.Y_AXIS));
         sizePanel.setBorder(BorderFactory.createEmptyBorder(40, 60, 50, 60));
         sizePanel.setBackground(new Color(255, 255, 255));
@@ -38,7 +36,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
         selectLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
         String[] levels = { "Level 1", "Level 2", "Level 3", "Level 4", "Level 5" };
-        JComboBox<String> lvlComboBox = new JComboBox<>(levels);
+        lvlComboBox = new JComboBox<>(levels);
         lvlComboBox.setMaximumSize(new Dimension(200, 30));
         lvlComboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         lvlComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -49,12 +47,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
         startButton.setFocusPainted(false);
         startButton.setBackground(new Color(100, 149, 237));
         startButton.setForeground(Color.WHITE);
-        startButton.addActionListener(e -> {
-            int selectedLevel = lvlComboBox.getSelectedIndex() + 1;
-            gridSize = selectedLevel + 1;
-            initializeGame();
-            sizePanel.setVisible(false);
-        });
+        startButton.addActionListener(e -> StartGame());
 
         sizePanel.add(Box.createVerticalStrut(20));
         sizePanel.add(selectLabel);
@@ -69,6 +62,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
         revalidate();
         repaint();
     }
+
 
     private void initializeGame() {
         puzzlePanel.removeAll();
@@ -88,7 +82,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
         infoPanel.setBackground(new Color(255, 255, 255));
         infoPanel.setPreferredSize(new Dimension(250, 0));
 
-        timeLabel = new JLabel("Time Elapsed: 0 seconds");
+        timeLabel = new JLabel("Time Elapsed : 0 seconds");
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
         shuffleCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -144,7 +138,7 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
         for (int i = 0; i < gridSize * gridSize - 1; i++) {
             buttonLabels.add(String.valueOf(i));
         }
-        buttonLabels.add(""); // Empty button
+        buttonLabels.add("");
 
         Collections.shuffle(buttonLabels);
         for (int i = 0; i < buttons.length; i++) {
@@ -153,6 +147,14 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
             buttons[i].addActionListener(new ButtonListener());
             gridPanel.add(buttons[i]);
         }
+    }
+
+    @Override
+    public void StartGame(){
+        int selectedLevel = lvlComboBox.getSelectedIndex() + 1;
+        gridSize = selectedLevel + 1;
+        initializeGame();
+        sizePanel.setVisible(false);
     }
 
     @Override
@@ -346,9 +348,8 @@ public class PuzzleGame extends JFrame implements ButtonActionHandler {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PuzzleGame game = new PuzzleGame();
-            game.setVisible(true);
-        });
+        PuzzleGame game = new PuzzleGame();
+        game.setVisible(true);
+
     }
 }

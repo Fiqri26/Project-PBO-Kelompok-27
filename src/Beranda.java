@@ -1,21 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class Beranda extends JFrame {
+public class Beranda extends GameFrame {
 
     public Beranda() {
+        super("Pictzzle");
         TampilanBeranda();
     }
 
     private void TampilanBeranda() {
-        setTitle("Pitczzle");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 600);
-        setResizable(false);
-        setLocationRelativeTo(null);
-
         JPanel backgroundPanel = new JPanel() {
             private Image backgroundImage = new ImageIcon(getClass().getResource("images/background.jpg")).getImage();
 
@@ -38,15 +31,8 @@ public class Beranda extends JFrame {
         startButton.setBackground(new Color(219, 112, 147));
         startButton.setForeground(Color.WHITE);
         startButton.setFocusPainted(false);
-        startButton.setBounds(600, 600, 120, 40);
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PuzzleGame puzzlegame = new PuzzleGame();
-                puzzlegame.setVisible(true);
-                dispose();
-            }
-        });
+        startButton.setBounds(600, 600, 120, 55);
+        startButton.addActionListener(e -> StartGame());
         buttonPanel.add(startButton);
 
         JButton guideButton = new JButton("How to Play");
@@ -54,12 +40,10 @@ public class Beranda extends JFrame {
         guideButton.setBackground(new Color(147, 112, 219));
         guideButton.setForeground(Color.WHITE);
         guideButton.setFocusPainted(false);
-        guideButton.setBounds(800, 600, 150, 40);
-        guideButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null,
-                    "How to Play :\n" +
+        guideButton.setBounds(800, 600, 150, 55);
+        guideButton.addActionListener(e -> JOptionPane.showMessageDialog(
+                null,
+                "How to Play :\n" +
                         "1. Klik tombol 'Start' untuk memulai permainan.\n" +
                         "2. Permainan dimulai dengan puzzle gambar pertama.\n" +
                         "3. Susun potongan puzzle hingga membentuk gambar yang sempurna.\n" +
@@ -71,16 +55,23 @@ public class Beranda extends JFrame {
                         "- Resume: Melanjutkan permainan yang dijeda.\n" +
                         "- Pause: Menjeda permainan sementara.\n\n" +
                         "Selamat bermain dan bersenang-senang !",
-                    "How to Play",
-                JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+                "How to Play",
+                JOptionPane.INFORMATION_MESSAGE
+        ));
+
         buttonPanel.add(guideButton);
 
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    @Override
+    public void StartGame() {
+        new PuzzleGame().setVisible(true);
+        dispose();
+    }
+
     public static void main(String[] args) {
-        new Beranda().setVisible(true);
+        Beranda beranda = new Beranda();
+        beranda.setVisible(true);
     }
 }
