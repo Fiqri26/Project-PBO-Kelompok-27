@@ -3,7 +3,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-public class PuzzleGame extends GameFrame implements GameController{
+public class PuzzleGame extends GameFrame implements ButtonActionHandler{
 
     private JPanel puzzlePanel;
     private JPanel sizePanel;

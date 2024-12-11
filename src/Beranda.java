@@ -26,7 +26,7 @@ public class Beranda extends GameFrame {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
-        JButton startButton = new JButton("Start");
+        JButton startButton = new JButton("Play");
         startButton.setFont(new Font("Arial", Font.BOLD, 18));
         startButton.setBackground(new Color(219, 112, 147));
         startButton.setForeground(Color.WHITE);
@@ -45,15 +45,15 @@ public class Beranda extends GameFrame {
                 null,
                 "How to Play :\n" +
                         "1. Klik tombol 'Start' untuk memulai permainan.\n" +
-                        "2. Permainan dimulai dengan puzzle gambar pertama.\n" +
+                        "2. Pemain dapat bebas memilih level puzzle.\n" +
                         "3. Susun potongan puzzle hingga membentuk gambar yang sempurna.\n" +
-                        "4. Setelah menyelesaikan satu puzzle, permainan akan otomatis berpindah ke gambar berikutnya.\n" +
+                        "4. Setelah menyelesaikan satu puzzle, permainan akan otomatis berpindah ke level berikutnya.\n" +
                         "5. Selesaikan semua 5 puzzle gambar untuk menang!\n\n" +
-                        "Kontrol tambahan :\n" +
-                        "- Reset: Memulai permainan dari awal.\n" +
-                        "- Exit: Keluar dari permainan.\n" +
-                        "- Resume: Melanjutkan permainan yang dijeda.\n" +
-                        "- Pause: Menjeda permainan sementara.\n\n" +
+                        "Tombol Kontrol Tambahan Permainan :\n" +
+                        "- Reset : Memulai permainan dari awal.\n" +
+                        "- Exit : Keluar dari permainan.\n" +
+                        "- Resume : Melanjutkan permainan yang dijeda.\n" +
+                        "- Pause : Menjeda permainan sementara.\n\n" +
                         "Selamat bermain dan bersenang-senang !",
                 "How to Play",
                 JOptionPane.INFORMATION_MESSAGE
