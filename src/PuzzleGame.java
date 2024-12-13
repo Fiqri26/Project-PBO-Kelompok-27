@@ -12,7 +12,6 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     private JComboBox<String> lvlComboBox;
     private JLabel timeLabel, shuffleCountLabel;
     private int shuffleCount = 0;
-    private int currentLevel;
     private int gridSize;
     private boolean timerStarted = false;
     private TimerThread timerThread;
@@ -20,7 +19,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     public PuzzleGame() {
         super("Pictzzle");
         puzzlePanel = new JPanel();
-        puzzlePanel.setBackground(new Color(173, 216, 230));
+        puzzlePanel.setBackground(new Color(135, 206, 250));
         puzzlePanel.setLayout(new BorderLayout());
         setContentPane(puzzlePanel);
         showLevelSelection();
@@ -29,8 +28,8 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     private void showLevelSelection() {
         sizePanel = new JPanel();
         sizePanel.setLayout(new BoxLayout(sizePanel, BoxLayout.Y_AXIS));
-        sizePanel.setBorder(BorderFactory.createEmptyBorder(40, 60, 60, 60));
-        sizePanel.setBackground(new Color(255, 255, 255));
+        sizePanel.setBorder(BorderFactory.createEmptyBorder(20, 70, 20, 70));
+        sizePanel.setBackground(new Color(173, 216, 230));
 
         JLabel selectLabel = new JLabel("SELECT LEVEL");
         selectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -40,7 +39,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         lvlComboBox = new JComboBox<>(levels);
         lvlComboBox.setMaximumSize(new Dimension(200, 30));
         lvlComboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lvlComboBox.setBackground(new Color(100, 149, 237));
+        lvlComboBox.setBackground(new Color(176, 196, 222));
         lvlComboBox.setForeground(Color.WHITE);
         lvlComboBox.setFont(new Font("Arial", Font.PLAIN, 15));
 
@@ -52,23 +51,22 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         startButton.setForeground(Color.WHITE);
         startButton.addActionListener(e -> StartGame());
 
-        /*
-        JButton exittButton = new JButton("Start Game");
-        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        startButton.setFont(new Font("Arial", Font.BOLD, 16));
-        startButton.setFocusPainted(false);
-        startButton.setBackground(new Color(100, 149, 237));
-        startButton.setForeground(Color.WHITE);
-        startButton.addActionListener(e -> StartGame());
-         */
+        JButton exitButton = new JButton("Exit Game");
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitButton.setFont(new Font("Arial", Font.BOLD, 16));
+        exitButton.setFocusPainted(false);
+        exitButton.setBackground(new Color(250, 128, 114));
+        exitButton.setForeground(Color.WHITE);
+        exitButton.addActionListener(e -> exit());
 
-        sizePanel.add(Box.createVerticalStrut(20));
+        sizePanel.add(Box.createVerticalStrut(10));
         sizePanel.add(selectLabel);
-        sizePanel.add(Box.createVerticalStrut(15));
+        sizePanel.add(Box.createVerticalStrut(30));
         sizePanel.add(lvlComboBox);
-        sizePanel.add(Box.createVerticalStrut(60));
+        sizePanel.add(Box.createVerticalStrut(45));
         sizePanel.add(startButton);
-        sizePanel.add(Box.createVerticalStrut(0));
+        sizePanel.add(Box.createVerticalStrut(33));
+        sizePanel.add(exitButton);
 
         puzzlePanel.setLayout(new GridBagLayout());
         puzzlePanel.add(sizePanel);
@@ -92,10 +90,10 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
-        infoPanel.setBackground(new Color(255, 255, 255));
+        infoPanel.setBackground(new Color(173, 216, 230));
         infoPanel.setPreferredSize(new Dimension(250, 0));
 
-        timeLabel = new JLabel("Time Used : 0:00");
+        timeLabel = new JLabel("Time Taken : 0:00");
         timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
@@ -120,9 +118,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         infoPanel.add(backButton);
 
         puzzlePanel.add(infoPanel, BorderLayout.EAST);
-
         initializeButtons(gridPanel);
-
         revalidate();
         repaint();
 
@@ -183,7 +179,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
             }
         }
         timerStarted = false;
-        timeLabel.setText("Time Used : 0:00");
+        timeLabel.setText("Time Taken : 0:00");
         timerThread = new TimerThread(timeLabel);
         resetPuzzle();
     }
@@ -216,6 +212,21 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         repaint();
     }
 
+    @Override
+    public void exit() {
+    int confirm = JOptionPane.showConfirmDialog(
+        this,
+        "Apakah Anda Ingin Keluar Dari Permainan ?",
+        "Exit Confirmation",
+        JOptionPane.YES_NO_OPTION
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        System.exit(0);
+    }
+}
+
+
     private void resetPuzzle() {
         Collections.shuffle(buttonLabels);
         for (int i = 0; i < buttons.length; i++) {
@@ -235,7 +246,6 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     }
 
     private boolean isSolved() {
-        currentLevel = gridSize - 1;
         for (int i = 0; i < buttonLabels.size() - 1; i++) {
             if (!buttons[i].getText().equals(String.valueOf(i))) {
                 return false;
@@ -291,7 +301,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
             completeDialogPanel.setBackground(new Color(255, 255, 255));
             completeDialogPanel.setBorder(BorderFactory.createEmptyBorder(40, 20, 40, 20));
 
-            JLabel messageLabel = new JLabel("Selamat Anda telah menyelesaikan Puzzel Level " + currentLevel + "!");
+            JLabel messageLabel = new JLabel("Selamat Anda telah menyelesaikan Puzzel Level " + (gridSize - 1) + "!");
             messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
             messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
