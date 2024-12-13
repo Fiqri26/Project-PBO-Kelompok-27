@@ -3,12 +3,15 @@ import javax.swing.SwingUtilities;
 
 public class TimerThread extends Thread {
     private int elapsedTimeInSeconds = 0;
+    private int moveCount = 0;
     private boolean running = true;
     private boolean paused = false;
     private JLabel timeLabel;
+    private JLabel moveLabel;
 
-    public TimerThread(JLabel timeLabel) {
+    public TimerThread(JLabel timeLabel, JLabel moveLabel) {
         this.timeLabel = timeLabel;
+        this.moveLabel = moveLabel;
     }
 
     @Override
@@ -39,6 +42,15 @@ public class TimerThread extends Thread {
         }
     }
 
+<<<<<<< HEAD
+=======
+    public void incrementMoveCount() {
+        moveCount++;
+        SwingUtilities.invokeLater(() -> 
+            moveLabel.setText("Moves : " + moveCount));
+    }
+
+>>>>>>> c329205dd7586548c3595153e5c231db87067b53
     public void stopTimer() {
         running = false;
         interrupt();
