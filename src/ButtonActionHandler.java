@@ -3,5 +3,5 @@ interface ButtonActionHandler{
     void pause();
     void resume();
     void back();
-    //void exit();
+    void exit();
 }
