@@ -10,7 +10,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     private JButton[] buttons;
     private ArrayList<String> buttonLabels;
     private JComboBox<String> lvlComboBox;
-    private JLabel timeLabel, shuffleCountLabel;
+    private JLabel timeLabel, shuffleCountLabel, timeTitleLabel;
     private int shuffleCount = 0;
     private int gridSize;
     private boolean timerStarted = false;
@@ -93,9 +93,14 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         infoPanel.setBackground(new Color(173, 216, 230));
         infoPanel.setPreferredSize(new Dimension(250, 0));
 
-        timeLabel = new JLabel("Time Taken : 0:00");
+        JLabel timeTitleLabel = new JLabel("Time Taken");
+        timeTitleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timeTitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        timeLabel = new JLabel("00 m : 00 s");
         timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
         shuffleCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -106,9 +111,10 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         JButton resumeButton = createInfoButton("Resume", buttonSize, e -> resume());
         JButton backButton = createInfoButton("Back", buttonSize, e -> back());
 
-        infoPanel.add(Box.createVerticalStrut(40));
+        infoPanel.add(timeTitleLabel);
+        infoPanel.add(Box.createVerticalStrut(5));
         infoPanel.add(timeLabel);
-        infoPanel.add(Box.createVerticalStrut(60));
+        infoPanel.add(Box.createVerticalStrut(100));
         infoPanel.add(resetButton);
         infoPanel.add(Box.createVerticalStrut(35));
         infoPanel.add(pauseButton);
@@ -179,7 +185,10 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
             }
         }
         timerStarted = false;
-        timeLabel.setText("Time Taken : 0:00");
+        if (timeTitleLabel != null) {
+            timeTitleLabel.setText("Time Taken");
+        }
+        timeLabel.setText("00 m : 00 s");
         timerThread = new TimerThread(timeLabel);
         resetPuzzle();
     }
@@ -214,18 +223,23 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
 
     @Override
     public void exit() {
-    int confirm = JOptionPane.showConfirmDialog(
+    Object[] options = {"Ya", "Tidak"};
+    int confirm = JOptionPane.showOptionDialog(
         this,
-        "Apakah Anda Ingin Keluar Dari Permainan ?",
+        "Apakah Anda Ingin Keluar Dari Permainan?",
         "Exit Confirmation",
-        JOptionPane.YES_NO_OPTION
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        options,
+        options[0]
     );
 
     if (confirm == JOptionPane.YES_OPTION) {
         System.exit(0);
     }
-}
 
+}
 
     private void resetPuzzle() {
         Collections.shuffle(buttonLabels);

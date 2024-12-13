@@ -26,24 +26,35 @@ public class TimerThread extends Thread {
                 int minutes = elapsedTimeInSeconds / 60;
                 int seconds = elapsedTimeInSeconds % 60;
 
-                SwingUtilities.invokeLater(() -> timeLabel.setText(
-                    String.format("Time Taken : %d:%02d", minutes, seconds)));
+                // Update label waktu secara aman di thread UI
+                SwingUtilities.invokeLater(() ->
+                    timeLabel.setText(String.format("%02d m : %02d s", minutes, seconds))
+                );
             } catch (InterruptedException e) {
+                if (!running) {
+                    break;
+                }
                 Thread.currentThread().interrupt();
-                break;
             }
         }
     }
+
     public void stopTimer() {
         running = false;
+        interrupt();
     }
+
     public void resetTimer() {
         elapsedTimeInSeconds = 0;
-        SwingUtilities.invokeLater(() -> timeLabel.setText("Time Taken : 0:00"));
+        SwingUtilities.invokeLater(() -> timeLabel.setText("00 m : 00 s"));
     }
+
     public void pauseTimer() {
-        paused = true;
+        synchronized (this) {
+            paused = true;
+        }
     }
+
     public synchronized void resumeTimer() {
         paused = false;
         notify();
