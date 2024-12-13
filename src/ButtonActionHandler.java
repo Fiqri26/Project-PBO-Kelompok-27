@@ -2,5 +2,6 @@ interface ButtonActionHandler{
     void reset();
     void pause();
     void resume();
-    void exit();
+    void back();
+    //void exit();
 }

@@ -27,7 +27,7 @@ public class TimerThread extends Thread {
                 int seconds = elapsedTimeInSeconds % 60;
 
                 SwingUtilities.invokeLater(() -> timeLabel.setText(
-                    String.format("Time Elapsed: %d:%02d", minutes, seconds)));
+                    String.format("Time Used : %d:%02d", minutes, seconds)));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
@@ -39,7 +39,7 @@ public class TimerThread extends Thread {
     }
     public void resetTimer() {
         elapsedTimeInSeconds = 0;
-        SwingUtilities.invokeLater(() -> timeLabel.setText("Time Elapsed: 0:00"));
+        SwingUtilities.invokeLater(() -> timeLabel.setText("Time Used : 0:00"));
     }
     public void pauseTimer() {
         paused = true;

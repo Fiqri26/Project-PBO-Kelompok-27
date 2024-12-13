@@ -23,15 +23,15 @@ public class Beranda extends GameFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 10));
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 70, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
 
-        JButton startButton = new JButton("Play");
+        JButton startButton = new JButton("Start Game");
         startButton.setFont(new Font("Arial", Font.BOLD, 18));
         startButton.setBackground(new Color(219, 112, 147));
         startButton.setForeground(Color.WHITE);
         startButton.setFocusPainted(false);
-        startButton.setBounds(600, 600, 120, 55);
+        startButton.setBounds(600, 600, 150, 55);
         startButton.addActionListener(e -> StartGame());
         buttonPanel.add(startButton);
 
@@ -44,11 +44,13 @@ public class Beranda extends GameFrame {
         guideButton.addActionListener(e -> JOptionPane.showMessageDialog(
                 null,
                 "How to Play :\n" +
-                        "1. Klik tombol 'Start' untuk memulai permainan.\n" +
+                        "1. Klik tombol Start Game untuk memulai permainan.\n" +
                         "2. Pemain dapat bebas memilih level puzzle.\n" +
-                        "3. Susun potongan puzzle hingga membentuk gambar yang sempurna.\n" +
                         "4. Setelah menyelesaikan satu puzzle, permainan akan otomatis berpindah ke level berikutnya.\n" +
-                        "5. Selesaikan semua 5 puzzle gambar untuk menang!\n\n" +
+                        "3. Susun potongan puzzle hingga membentuk gambar yang sempurna.\n" +
+                        "4. Setelah menyelesaikan satu puzzle, pemain bisa mengulang puzzel tersebut atau pindah ke level berikutnya.\n" +
+                        "5. Setelah menyelesaikan satu puzzle, permainan akan otomatis berpindah ke level berikutnya.\n" +
+                        "6. Selesaikan semua 5 puzzle gambar untuk menang!\n\n" +
                         "Tombol Kontrol Tambahan Permainan :\n" +
                         "- Reset : Memulai permainan dari awal.\n" +
                         "- Exit : Keluar dari permainan.\n" +
