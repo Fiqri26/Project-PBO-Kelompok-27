@@ -10,7 +10,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     private JButton[] buttons;
     private ArrayList<String> buttonLabels;
     private JComboBox<String> lvlComboBox;
-    private JLabel timeLabel, shuffleCountLabel;
+    private JLabel timeLabel, moveCountLabel, shuffleCountLabel;
     private int shuffleCount = 0;
     private int currentLevel;
     private int gridSize;
@@ -92,14 +92,21 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
-        infoPanel.setBackground(new Color(255, 255, 255));
+        infoPanel.setBackground(new Color(0, 0, 51));
         infoPanel.setPreferredSize(new Dimension(250, 0));
 
         timeLabel = new JLabel("Time Used : 0:00");
         timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timeLabel.setForeground(Color.WHITE);
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
         shuffleCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        moveCountLabel = new JLabel("Moves : 0");
+        moveCountLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        moveCountLabel.setForeground(Color.WHITE);
+        moveCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         Dimension buttonSize = new Dimension(120, 40);
 
@@ -108,8 +115,10 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         JButton resumeButton = createInfoButton("Resume", buttonSize, e -> resume());
         JButton backButton = createInfoButton("Back", buttonSize, e -> back());
 
-        infoPanel.add(Box.createVerticalStrut(40));
+        infoPanel.add(Box.createVerticalStrut(30));
         infoPanel.add(timeLabel);
+        infoPanel.add(Box.createVerticalStrut(35));
+        infoPanel.add(moveCountLabel);
         infoPanel.add(Box.createVerticalStrut(60));
         infoPanel.add(resetButton);
         infoPanel.add(Box.createVerticalStrut(35));
@@ -130,7 +139,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         if (timerThread != null) {
             timerThread.stopTimer();
         }
-        timerThread = new TimerThread(timeLabel);
+        timerThread = new TimerThread(timeLabel,moveCountLabel);
     }
 
     private JButton createInfoButton(String text, Dimension size, ActionListener action) {
@@ -184,7 +193,8 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         }
         timerStarted = false;
         timeLabel.setText("Time Used : 0:00");
-        timerThread = new TimerThread(timeLabel);
+        moveCountLabel.setText("Moves : 0");
+        timerThread = new TimerThread(timeLabel, moveCountLabel);
         resetPuzzle();
     }
 
@@ -351,6 +361,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
                     || clickedIndex == emptyIndex - gridSize
                     || clickedIndex == emptyIndex + gridSize) {
                 swapButtons(emptyIndex, clickedIndex);
+                timerThread.incrementMoveCount();
             }
 
             isSolved();
