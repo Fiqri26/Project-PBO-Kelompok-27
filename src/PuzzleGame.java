@@ -197,7 +197,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
            }
             timerStarted = false;
             timeLabel.setText("00 m : 00 s");
-            moveCountLabel.setText("Moves : 0");
+            moveCountLabel.setText("Move : 0");
             timerThread = new TimerThread(timeLabel, moveCountLabel);
             resetPuzzle();
         }
