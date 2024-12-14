@@ -1,4 +1,8 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +19,6 @@ public class Koneksi{
             ResultSet resultSet = statement.executeQuery("SELECT * FROM pictzzel")
         ) {
             while (resultSet.next()) {
-                // Mendapatkan path gambar atau URL gambar
                 String imagePath = resultSet.getString("ImagePath");
                 myPuzzle.add(new Puzzel(
                     resultSet.getInt("Id"),
