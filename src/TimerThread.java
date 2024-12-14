@@ -29,10 +29,9 @@ public class TimerThread extends Thread {
                 int minutes = elapsedTimeInSeconds / 60;
                 int seconds = elapsedTimeInSeconds % 60;
 
-                // Update label waktu secara aman di thread UI
-                SwingUtilities.invokeLater(() ->
-                    timeLabel.setText(String.format("%02d m : %02d s", minutes, seconds))
-                );
+                SwingUtilities.invokeLater(() -> {
+                    timeLabel.setText(String.format("%02d m : %02d s", minutes, seconds));
+                });
             } catch (InterruptedException e) {
                 if (!running) {
                     break;
@@ -42,15 +41,11 @@ public class TimerThread extends Thread {
         }
     }
 
-<<<<<<< HEAD
-=======
     public void incrementMoveCount() {
         moveCount++;
-        SwingUtilities.invokeLater(() -> 
-            moveLabel.setText("Moves : " + moveCount));
+        SwingUtilities.invokeLater(() -> moveLabel.setText("Moves : " + moveCount));
     }
 
->>>>>>> c329205dd7586548c3595153e5c231db87067b53
     public void stopTimer() {
         running = false;
         interrupt();
@@ -72,5 +67,3 @@ public class TimerThread extends Thread {
         notify();
     }
 }
-
-
