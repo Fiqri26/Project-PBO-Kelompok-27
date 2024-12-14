@@ -105,7 +105,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         shuffleCountLabel = new JLabel("Number of Shuffles: " + shuffleCount);
         shuffleCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        moveCountLabel = new JLabel("Moves : 0");
+        moveCountLabel = new JLabel("Move : 0");
         moveCountLabel.setFont(new Font("Arial", Font.BOLD, 16));
         moveCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 

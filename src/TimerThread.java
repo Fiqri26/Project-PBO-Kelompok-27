@@ -43,7 +43,7 @@ public class TimerThread extends Thread {
 
     public void incrementMoveCount() {
         moveCount++;
-        SwingUtilities.invokeLater(() -> moveLabel.setText("Moves : " + moveCount));
+        SwingUtilities.invokeLater(() -> moveLabel.setText("Move : " + moveCount));
     }
 
     public void stopTimer() {
