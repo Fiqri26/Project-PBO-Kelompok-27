@@ -1,13 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.*;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class PuzzleGame extends GameFrame implements ButtonActionHandler{
+public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
     private JPanel puzzlePanel;
     private JPanel sizePanel;
@@ -21,11 +17,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     private boolean timerStarted = false;
     private TimerThread timerThread;
 
-    private BufferedImage fullImage;
-    private BufferedImage[] imagePieces;
-    private JLabel[] labels;
-
-    public PuzzleGame() {
+    public PuzzelGame() {
         super("Pictzzle");
         puzzlePanel = new JPanel();
         puzzlePanel.setBackground(new Color(135, 206, 250));
@@ -165,10 +157,7 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     }
 
     private void initializeButtons(JPanel gridPanel) {
-        splitImage();
-        labels = new JLabel[gridSize * gridSize];
-
-        // buttons = new JButton[gridSize * gridSize];
+        buttons = new JButton[gridSize * gridSize];
         buttonLabels = new ArrayList<>();
 
         for (int i = 0; i < gridSize * gridSize - 1; i++) {
@@ -177,27 +166,11 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
         buttonLabels.add("");
 
         Collections.shuffle(buttonLabels);
-        // for (int i = 0; i < buttons.length; i++) {
-        //     buttons[i] = new JButton(buttonLabels.get(i));
-        //     buttons[i].setFont(new Font("Arial", Font.BOLD, Math.max(30, 60 / gridSize)));
-        //     buttons[i].addActionListener(new ButtonListener());
-        //     gridPanel.add(buttons[i]);
-        // }
-
-        for (int i = 0; i < labels.length; i++) {
-            JLabel label = new JLabel();
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setVerticalAlignment(SwingConstants.CENTER);
-            label.setOpaque(true);
-            if (!buttonLabels.get(i).equals("")) {
-                int pieceIndex = Integer.parseInt(buttonLabels.get(i));
-                label.setIcon(new ImageIcon(imagePieces[pieceIndex]));
-            } else {
-                label.setBackground(Color.WHITE);
-            }
-            label.addMouseListener(new LabelClickListener(i));
-            gridPanel.add(label);
-            labels[i] = label;
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i] = new JButton(buttonLabels.get(i));
+            buttons[i].setFont(new Font("Arial", Font.BOLD, Math.max(30, 60 / gridSize)));
+            buttons[i].addActionListener(new ButtonListener());
+            gridPanel.add(buttons[i]);
         }
     }
 
@@ -205,9 +178,6 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
     public void StartGame(){
         int selectedLevel = lvlComboBox.getSelectedIndex() + 1;
         gridSize = selectedLevel + 1;
-
-        loadLevelImage(selectedLevel);
-
         initializeGame();
         sizePanel.setVisible(false);
     }
@@ -263,141 +233,50 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
 
     @Override
     public void exit() {
-        Object[] options = {"Ya", "Tidak"};
-        int confirm = JOptionPane.showOptionDialog(
-            this,
-            "Apakah Anda Ingin Keluar Dari Permainan?",
-            "Exit Confirmation",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[0]
-        );
+    Object[] options = {"Ya", "Tidak"};
+    int confirm = JOptionPane.showOptionDialog(
+        this,
+        "Apakah Anda Ingin Keluar Dari Permainan?",
+        "Exit Confirmation",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        options,
+        options[0]
+    );
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        }
-
+    if (confirm == JOptionPane.YES_OPTION) {
+        System.exit(0);
     }
 
-    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
-        BufferedImage resizeImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resizeImage.createGraphics();
-
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        g2d.dispose();
-
-        return resizeImage;
-
-    }
-
-    // private BufferedImage cropToSquere(BufferedImage originalImage) {
-    //     int width = originalImage.getWidth();
-    //     int height = originalImage.getHeight();
-    //     int squareSize = Math.min(width, height);
-
-    //     return originalImage.getSubimage((width -squareSize) / 2, (height - squareSize) / 2, squareSize, squareSize);
-    // }
-
-    private void loadLevelImage(int level) {
-        try {
-            BufferedImage originalImage = ImageIO.read(new File("src/images/level" + level + ".jpg"));
-            // BufferedImage croppedImage = cropToSquere(originalImage);
-            // int targetSize = 400;
-            fullImage = resizeImage(originalImage, 730, 558);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to load image for level " + level);
-            e.printStackTrace();
-        }
-    }
-
-    private void splitImage() {
-        int pieceWidht = fullImage.getWidth() / gridSize;
-        int pieceHeight = fullImage.getHeight() / gridSize;
-        imagePieces = new BufferedImage[gridSize * gridSize];
-
-        for (int row = 0; row < gridSize; row++) {
-            for (int col = 0; col < gridSize; col++) {
-                int index = row * gridSize + col;
-                if (index == gridSize * gridSize - 1) {
-                    imagePieces[index] = null;
-                } else {
-                    imagePieces[index] = fullImage.getSubimage(
-                        col * pieceWidht, row * pieceHeight, pieceWidht, pieceHeight);
-                }
-            }
-        }
-    }
+}
 
     private void resetPuzzle() {
         Collections.shuffle(buttonLabels);
-        // for (int i = 0; i < buttons.length; i++) {
-        //     buttons[i].setText(buttonLabels.get(i));
-        // }
-        // shuffleCount++;
-        // shuffleCountLabel.setText("Number of Shuffles: " + shuffleCount);
-        // if (timerThread != null) {
-        //     timerThread.resetTimer();
-        // }
-
-        for (int i = 0; i < labels.length; i++) {
-            JLabel label = labels[i];
-
-            if (!buttonLabels.get(i).equals("")) {
-                int pieceIndex = Integer.parseInt(buttonLabels.get(i));
-                label.setIcon(new ImageIcon(imagePieces[pieceIndex]));
-                label.setBackground(null);
-            } else {
-                label.setIcon(null);
-                label.setBackground(Color.WHITE);
-            }
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setText(buttonLabels.get(i));
         }
         shuffleCount++;
-        shuffleCountLabel.setText("Number of shuffle : " + shuffleCount);
-
+        shuffleCountLabel.setText("Number of Shuffles: " + shuffleCount);
         if (timerThread != null) {
             timerThread.resetTimer();
         }
     }
 
-    // private void swapButtons(int emptyIndex, int clickedIndex) {
-    //     String temp = buttons[emptyIndex].getText();
-    //     buttons[emptyIndex].setText(buttons[clickedIndex].getText());
-    //     buttons[clickedIndex].setText(temp);
-    // }
-
-    private void swapLabels(int emptyIndex, int clickedIndex) {
-        ImageIcon tempIcon = (ImageIcon) labels[emptyIndex].getIcon();
-        labels[emptyIndex].setIcon(labels[clickedIndex].getIcon());
-        labels[clickedIndex].setIcon(tempIcon);
-
-        labels[emptyIndex].setBackground(Color.LIGHT_GRAY);
-        labels[clickedIndex].setBackground(null);
+    private void swapButtons(int emptyIndex, int clickedIndex) {
+        String temp = buttons[emptyIndex].getText();
+        buttons[emptyIndex].setText(buttons[clickedIndex].getText());
+        buttons[clickedIndex].setText(temp);
     }
 
     private boolean isSolved() {
-        // for (int i = 0; i < buttonLabels.size() - 1; i++) {
-        //     if (!buttons[i].getText().equals(String.valueOf(i))) {
-        //         return false;
-        //     }
-        // }
-
-        // if (!buttons[buttons.length - 1].getText().equals("")) {
-        //     return false;
-        // }
-
-        for (int i = 0; i < gridSize * gridSize - 1; i++) {
-            if (labels[i].getIcon() == null || ((ImageIcon) labels[i].getIcon()).getImage() != imagePieces[i]) {
+        for (int i = 0; i < buttonLabels.size() - 1; i++) {
+            if (!buttons[i].getText().equals(String.valueOf(i))) {
                 return false;
             }
         }
 
-        if (labels[labels.length - 1].getIcon() != null) {
+        if (!buttons[buttons.length - 1].getText().equals("")) {
             return false;
         }
 
@@ -472,91 +351,49 @@ public class PuzzleGame extends GameFrame implements ButtonActionHandler{
                 if (gridSize < 5) {
                     gridSize++;
                 }
-                loadLevelImage(gridSize - 1);
                 initializeGame();
             } else {
-                loadLevelImage(gridSize - 1);
                 initializeGame();
             }
         }
 
         return true;
-
-        // return labels[labels.length - 1].getIcon() == null;
     }
 
-    private class LabelClickListener extends MouseAdapter {
-        private final int index;
-
-        LabelClickListener(int index) {
-            this.index = index;
-        }
-
+    private class ButtonListener implements ActionListener {
         @Override
-        public void mouseClicked(MouseEvent e) {
-            int emptyIndex = -1;
-
+        public void actionPerformed(ActionEvent e) {
             if (!timerStarted) {
                 timerThread.start();
                 timerStarted = true;
             }
-            for (int i = 0; i < labels.length; i++) {
-                if (labels[i].getIcon() == null) {
+
+            JButton clickedButton = (JButton) e.getSource();
+            int clickedIndex = -1, emptyIndex = -1;
+
+            for (int i = 0; i < buttons.length; i++) {
+                if (buttons[i] == clickedButton) {
+                    clickedIndex = i;
+                }
+                if (buttons[i].getText().equals("")) {
                     emptyIndex = i;
-                    break;
                 }
             }
 
-            if ((index == emptyIndex - 1 && index % gridSize != gridSize - 1)
-                    || (index == emptyIndex + 1 && index % gridSize != 0)
-                    || index == emptyIndex - gridSize
-                    || index == emptyIndex + gridSize) {
-                swapLabels(emptyIndex, index);
+            if ((clickedIndex == emptyIndex - 1 && clickedIndex % gridSize != gridSize - 1)
+                    || (clickedIndex == emptyIndex + 1 && clickedIndex % gridSize != 0)
+                    || clickedIndex == emptyIndex - gridSize
+                    || clickedIndex == emptyIndex + gridSize) {
+                swapButtons(emptyIndex, clickedIndex);
                 timerThread.incrementMoveCount();
-                // if  (isSolved()) {
-                //     JOptionPane.showMessageDialog(PuzzleGame.this, "Puzzle Solved!");
-                // }
             }
 
             isSolved();
         }
-        
     }
 
-    // private class ButtonListener implements ActionListener {
-    //     @Override
-    //     public void actionPerformed(ActionEvent e) {
-    //         if (!timerStarted) {
-    //             timerThread.start();
-    //             timerStarted = true;
-    //         }
-
-    //         JButton clickedButton = (JButton) e.getSource();
-    //         int clickedIndex = -1, emptyIndex = -1;
-
-    //         for (int i = 0; i < buttons.length; i++) {
-    //             if (buttons[i] == clickedButton) {
-    //                 clickedIndex = i;
-    //             }
-    //             if (buttons[i].getText().equals("")) {
-    //                 emptyIndex = i;
-    //             }
-    //         }
-
-    //         if ((clickedIndex == emptyIndex - 1 && clickedIndex % gridSize != gridSize - 1)
-    //                 || (clickedIndex == emptyIndex + 1 && clickedIndex % gridSize != 0)
-    //                 || clickedIndex == emptyIndex - gridSize
-    //                 || clickedIndex == emptyIndex + gridSize) {
-    //             swapButtons(emptyIndex, clickedIndex);
-    //             timerThread.incrementMoveCount();
-    //         }
-
-    //         isSolved();
-    //     }
-    // }
-
     public static void main(String[] args) {
-        PuzzleGame game = new PuzzleGame();
+        PuzzelGame game = new PuzzelGame();
         game.setVisible(true);
 
     }

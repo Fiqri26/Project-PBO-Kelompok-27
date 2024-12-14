@@ -62,13 +62,12 @@ public class Beranda extends GameFrame {
         ));
 
         buttonPanel.add(guideButton);
-
         backgroundPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     @Override
     public void StartGame() {
-        new PuzzleGame().setVisible(true);
+        new PuzzelGame().setVisible(true);
         dispose();
     }
 

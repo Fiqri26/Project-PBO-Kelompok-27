@@ -1,36 +1,28 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Koneksi {
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/puzzle";
+    private static final String URL = "jdbc:mysql://localhost:3306/puzzel";
     private static final String USER = "root";
-    private static final String PASS = "";
+    private static final String PASSWORD = "";
 
-    private Connection connection;
-
-    public Connection openConnection() {
-        try {
-            Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("Koneksi berhasil ke database!");
-        } catch (ClassNotFoundException e) {
-            System.err.println("JDBC Driver tidak ditemukan: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Gagal membuka koneksi: " + e.getMessage());
-        }
-        return connection;
-    }
-
-    public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Koneksi ditutup.");
+    public static List<Puzzel> fetchSongs() {
+        List<Puzzel> myPuzzle = new ArrayList<>();
+        try (
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM pictzzle")
+        ) {
+            while (resultSet.next()) {
+                myPuzzle.add(new Puzzel(
+                    resultSet.getInt("Id"),
+                    resultSet.getString("ImagePath")
+                ));
             }
         } catch (SQLException e) {
-            System.err.println("Gagal menutup koneksi: " + e.getMessage());
+            e.printStackTrace();
         }
+        return myPuzzle;
     }
 }
