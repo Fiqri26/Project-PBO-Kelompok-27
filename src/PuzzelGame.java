@@ -5,13 +5,13 @@ import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.imageio.ImageIO;
-import javax.swing.*;
+// import javax.swing.*;
 
 public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
     private JPanel puzzlePanel;
     private JPanel sizePanel;
-    private JButton[] buttons;
+    // private JButton[] buttons;
     private ArrayList<String> buttonLabels;
     private JComboBox<String> lvlComboBox;
     private JLabel timeLabel, timeTitleLabel;
