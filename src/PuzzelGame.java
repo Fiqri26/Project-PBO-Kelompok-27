@@ -510,7 +510,7 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
             isSolved();
         }
-        
+
     }
 
     // private class ButtonListener implements ActionListener {
