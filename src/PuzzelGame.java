@@ -5,13 +5,11 @@ import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.imageio.ImageIO;
-// import javax.swing.*;
 
 public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
     private JPanel puzzlePanel;
     private JPanel sizePanel;
-    // private JButton[] buttons;
     private ArrayList<String> buttonLabels;
     private JComboBox<String> lvlComboBox;
     private JLabel timeLabel, timeTitleLabel;
@@ -20,7 +18,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     private int gridSize;
     private boolean timerStarted = false;
     private TimerThread timerThread;
-
     private BufferedImage fullImage;
     private BufferedImage[] imagePieces;
     private JLabel[] labels;
@@ -167,22 +164,7 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     private void initializeButtons(JPanel gridPanel) {
         splitImage();
         labels = new JLabel[gridSize * gridSize];
-        // buttons = new JButton[gridSize * gridSize];
         buttonLabels = new ArrayList<>();
-
-        // for (int i = 0; i < gridSize * gridSize - 1; i++) {
-        //     buttonLabels.add(String.valueOf(i));
-        // }
-        // buttonLabels.add("");
-
-        // Collections.shuffle(buttonLabels);
-        // for (int i = 0; i < buttons.length; i++) {
-        //     buttons[i] = new JButton(buttonLabels.get(i));
-        //     buttons[i].setFont(new Font("Arial", Font.BOLD, Math.max(30, 60 / gridSize)));
-        //     buttons[i].addActionListener(new ButtonListener());
-        //     gridPanel.add(buttons[i]);
-        // }
-
         for (int i = 0; i < gridSize * gridSize - 1; i++) {
             buttonLabels.add(String.valueOf(i));
         }
@@ -301,8 +283,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     private void loadLevelImage(int level) {
         try {
             BufferedImage originalImage = ImageIO.read(new File("src/images/level" + level + ".jpg"));
-            // BufferedImage croppedImage = cropToSquere(originalImage);
-            // int targetSize = 400;
             fullImage = resizeImage(originalImage, 730, 558);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to load image for level " + level);
@@ -330,14 +310,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
     private void resetPuzzle() {
         Collections.shuffle(buttonLabels);
-        // for (int i = 0; i < buttons.length; i++) {
-        //     buttons[i].setText(buttonLabels.get(i));
-        // }
-        // shuffleCount++;
-        // shuffleCountLabel.setText("Number of Shuffles: " + shuffleCount);
-        // if (timerThread != null) {
-        //     timerThread.resetTimer();
-        // }
         for (int i = 0; i < labels.length; i++) {
             JLabel label = labels[i];
 
@@ -358,11 +330,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
         }
     }
 
-    // private void swapButtons(int emptyIndex, int clickedIndex) {
-    //     String temp = buttons[emptyIndex].getText();
-    //     buttons[emptyIndex].setText(buttons[clickedIndex].getText());
-    //     buttons[clickedIndex].setText(temp);
-    // }
 
     private void swapLabels(int emptyIndex, int clickedIndex) {
         ImageIcon tempIcon = (ImageIcon) labels[emptyIndex].getIcon();
@@ -374,15 +341,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     }
 
     private boolean isSolved() {
-        // for (int i = 0; i < buttonLabels.size() - 1; i++) {
-        //     if (!buttons[i].getText().equals(String.valueOf(i))) {
-        //         return false;
-        //     }
-        // }
-
-        // if (!buttons[buttons.length - 1].getText().equals("")) {
-        //     return false;
-        // }
         for (int i = 0; i < gridSize * gridSize - 1; i++) {
             if (labels[i].getIcon() == null || ((ImageIcon) labels[i].getIcon()).getImage() != imagePieces[i]) {
                 return false;
@@ -503,47 +461,12 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
                     || index == emptyIndex + gridSize) {
                 swapLabels(emptyIndex, index);
                 timerThread.incrementMoveCount();
-                // if  (isSolved()) {
-                //     JOptionPane.showMessageDialog(PuzzleGame.this, "Puzzle Solved!");
-                // }
             }
 
             isSolved();
         }
 
     }
-
-    // private class ButtonListener implements ActionListener {
-    //     @Override
-    //     public void actionPerformed(ActionEvent e) {
-    //         if (!timerStarted) {
-    //             timerThread.start();
-    //             timerStarted = true;
-    //         }
-
-    //         JButton clickedButton = (JButton) e.getSource();
-    //         int clickedIndex = -1, emptyIndex = -1;
-
-    //         for (int i = 0; i < buttons.length; i++) {
-    //             if (buttons[i] == clickedButton) {
-    //                 clickedIndex = i;
-    //             }
-    //             if (buttons[i].getText().equals("")) {
-    //                 emptyIndex = i;
-    //             }
-    //         }
-
-    //         if ((clickedIndex == emptyIndex - 1 && clickedIndex % gridSize != gridSize - 1)
-    //                 || (clickedIndex == emptyIndex + 1 && clickedIndex % gridSize != 0)
-    //                 || clickedIndex == emptyIndex - gridSize
-    //                 || clickedIndex == emptyIndex + gridSize) {
-    //             swapButtons(emptyIndex, clickedIndex);
-    //             timerThread.incrementMoveCount();
-    //         }
-
-    //         isSolved();
-    //     }
-    // }
 
     public static void main(String[] args) {
         PuzzelGame game = new PuzzelGame();

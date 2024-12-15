@@ -15,7 +15,6 @@ public class Koneksi{
             ResultSet resultSet = statement.executeQuery("SELECT * FROM pictzzel")
         ) {
             while (resultSet.next()) {
-                // Mendapatkan path gambar atau URL gambar
                 String imagePath = resultSet.getString("ImagePath");
                 myPuzzle.add(new Puzzel(
                     resultSet.getInt("Id"),
