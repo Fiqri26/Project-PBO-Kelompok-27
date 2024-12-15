@@ -23,7 +23,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     private BufferedImage[] imagePieces;
     private JLabel[] labels;
 
-
     public PuzzelGame() {
         super("Pictzzle");
         puzzlePanel = new JPanel();
@@ -81,7 +80,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
         revalidate();
         repaint();
     }
-
 
     private void initializeGame() {
         puzzlePanel.removeAll();
@@ -340,7 +338,6 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
         }
     }
 
-
     private void swapLabels(int emptyIndex, int clickedIndex) {
         ImageIcon tempIcon = (ImageIcon) labels[emptyIndex].getIcon();
         labels[emptyIndex].setIcon(labels[clickedIndex].getIcon());
@@ -481,6 +478,5 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     public static void main(String[] args) {
         PuzzelGame game = new PuzzelGame();
         game.setVisible(true);
-
     }
 }
