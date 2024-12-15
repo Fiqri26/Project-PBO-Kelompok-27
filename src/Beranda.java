@@ -44,16 +44,16 @@ public class Beranda extends GameFrame {
         guideButton.addActionListener(e -> JOptionPane.showMessageDialog(
                 null,
                 "How to Play :\n" +
-                        "1. Klik tombol 'Start Game' untuk memulai permainan.\n" +
-                        "2. Pilih level puzzle yang ingin dimainkan sesuai keinginan.\n" +
+                        "1. Klik tombol 'Start Game' untuk memulai permainan puzzel.\n" +
+                        "2. Pilih level puzzel yang ingin dimainkan sesuai keinginan.\n" +
                         "3. Setelah memilih level, tekan tombol 'Play Game' untuk mulai bermain.\n" +
-                        "4. Susun potongan puzzle hingga membentuk gambar yang sempurna.\n" +
-                        "5. Setelah menyelesaikan sebuah puzzle, pemain dapat mengulang puzzle tersebut atau melanjutkan ke level berikutnya.\n" +
-                        "6. Pemain juga bisa memilih level lain tanpa harus menyelesaikan puzzle yang sedang dimainkan dengan menekan tombol 'Back'.\n" +
-                        "7. Selesaikan semua 5 puzzle untuk memenangkan permainan!\n\n" +
+                        "4. Susun potongan puzzel hingga membentuk gambar yang sempurna.\n" +
+                        "5. Setelah menyelesaikan sebuah puzzel, pemain dapat mengulang puzzel tersebut atau melanjutkan ke level berikutnya.\n" +
+                        "6. Pemain juga bisa memilih level lain tanpa harus menyelesaikan puzzel yang sedang dimainkan dengan menekan tombol 'Back'.\n" +
+                        "7. Selesaikan semua 5 puzzel untuk memenangkan permainan!\n\n" +
                         "Tombol Kontrol Tambahan Permainan :\n" +
                         "- Reset : Memulai permainan dari awal.\n" +
-                        "- Back : Kembali ke bagian pemilihan level.\n" +
+                        "- Back : Kembali ke bagian pemilihan level puzzel.\n" +
                         "- Resume : Melanjutkan permainan yang dijeda.\n" +
                         "- Pause : Menjeda permainan sementara.\n\n" +
                         "Selamat bermain dan bersenang-senang !",
