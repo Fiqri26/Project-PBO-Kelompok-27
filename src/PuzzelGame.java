@@ -2,13 +2,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.*;
 import java.util.*;
 import javax.swing.*;
 import javax.imageio.ImageIO;
 
 public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
-    private JPanel puzzlePanel;
+   private JPanel puzzlePanel;
     private JPanel sizePanel;
     private ArrayList<String> buttonLabels;
     private JComboBox<String> lvlComboBox;
@@ -21,6 +22,7 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
     private BufferedImage fullImage;
     private BufferedImage[] imagePieces;
     private JLabel[] labels;
+
 
     public PuzzelGame() {
         super("Pictzzle");
@@ -266,24 +268,32 @@ public class PuzzelGame extends GameFrame implements ButtonActionHandler{
 
     }
 
-    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
-        BufferedImage resizeImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resizeImage.createGraphics();
-
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+    private BufferedImage resizeImageFast(BufferedImage originalImage, int targetWidth, int targetHeight) {
+        Image tempImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.drawImage(tempImage, 0, 0, null);
         g2d.dispose();
-
-        return resizeImage;
+        return resizedImage;
     }
 
     private void loadLevelImage(int level) {
-        try {
-            BufferedImage originalImage = ImageIO.read(new File("src/images/level" + level + ".jpg"));
-            fullImage = resizeImage(originalImage, 730, 558);
+        Koneksi koneksi = new Koneksi();
+        String query = "SELECT imagePath FROM pictzzel WHERE level = ?";
+
+        try (Connection conn = koneksi.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, level);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String imagePath = rs.getString("imagePath");
+                fullImage = ImageIO.read(new File(imagePath));
+                fullImage = resizeImageFast(fullImage, 730, 558);
+            } else {
+                throw new Exception("No image found for level " + level);
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to load image for level " + level);
             e.printStackTrace();
